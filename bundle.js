@@ -197,8 +197,8 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Util = __webpack_require__(5);
-	const MovingObject = __webpack_require__(4);
+	const Util = __webpack_require__(4);
+	const MovingObject = __webpack_require__(5);
 	const Ship = __webpack_require__(6);
 
 
@@ -206,7 +206,7 @@
 	function Asteroid (options) {
 	  options.vel = Util.randomVel(5);
 
-	  options.color = "green";
+	  options.color = "yellow";
 	  options.rad = 20;
 	  MovingObject.call(this, options);
 	}
@@ -214,7 +214,7 @@
 	Util.inherits(MovingObject, Asteroid);
 
 	Asteroid.prototype.collideWith = function(otherObject) {
-	  
+
 	  if (otherObject instanceof Ship) {
 	    console.log("collided with ship!!");
 	    otherObject.relocate();
@@ -228,6 +228,33 @@
 
 /***/ },
 /* 4 */
+/***/ function(module, exports) {
+
+	const Util = {
+	  inherits (parent, child) {
+	    let Surrogate = function() {};
+	    Surrogate.prototype = parent.prototype;
+	    child.prototype = new Surrogate;
+	    child.prototype.constructor = child;
+	  },
+
+	  randomVel (length) {
+	    let xVal = Math.floor(Math.random() * length);
+	    let yVal = Math.floor(Math.sqrt(Math.pow(length, 2) - Math.pow(xVal, 2)));
+	    let dirs = [-1,1];
+	    let idx = Math.floor(Math.random() * 2);
+	    let xMult = dirs[idx];
+	    idx = Math.floor(Math.random() * 2);
+	    let yMult = dirs[idx];
+	    return [xVal * xMult, yVal * yMult];
+	  }
+	};
+
+	module.exports = Util;
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports) {
 
 	function MovingObject (options) {
@@ -283,45 +310,18 @@
 
 
 /***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	const Util = {
-	  inherits (parent, child) {
-	    let Surrogate = function() {};
-	    Surrogate.prototype = parent.prototype;
-	    child.prototype = new Surrogate;
-	    child.prototype.constructor = child;
-	  },
-
-	  randomVel (length) {
-	    let xVal = Math.floor(Math.random() * length);
-	    let yVal = Math.floor(Math.sqrt(Math.pow(length, 2) - Math.pow(xVal, 2)));
-	    let dirs = [-1,1];
-	    let idx = Math.floor(Math.random() * 2);
-	    let xMult = dirs[idx];
-	    idx = Math.floor(Math.random() * 2);
-	    let yMult = dirs[idx];
-	    return [xVal * xMult, yVal * yMult];
-	  }
-	};
-
-	module.exports = Util;
-
-
-/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Util = __webpack_require__(5);
-	const MovingObject = __webpack_require__(4);
+	const Util = __webpack_require__(4);
+	const MovingObject = __webpack_require__(5);
 	const Bullet = __webpack_require__(7);
 
 
 	function Ship (options) {
 	  options.vel = [0,0];
 
-	  options.color = "blue";
+	  options.color = "red";
 	  options.rad = 12;
 	  // console.log(options);
 	  MovingObject.call(this, options);
@@ -358,8 +358,8 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const MovingObject = __webpack_require__(4);
-	const Util = __webpack_require__(5);
+	const MovingObject = __webpack_require__(5);
+	const Util = __webpack_require__(4);
 
 
 	function Bullet (options) {
