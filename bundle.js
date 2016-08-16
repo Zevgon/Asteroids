@@ -73,10 +73,17 @@
 	}
 
 	GameView.prototype.start = function() {
+	  this.bindKeyHandlers();
 	  setInterval(() => {
 	    this.game.step();
 	    this.game.draw();
 	  }, 40);
+	};
+
+	GameView.prototype.bindKeyHandlers = function () {
+	  let ship = this.game.ship;
+
+	  window.key('up', function () { ship.power(); });
 	};
 
 	module.exports = GameView;
@@ -158,7 +165,8 @@
 	};
 
 	Game.prototype.moveObjects = function () {
-	  this.asteroids.forEach(asteroid => asteroid.move());
+	  let objects = this.allObjects();
+	  objects.forEach(object => object.move());
 	};
 
 	Game.prototype.wrap = function (pos) {
@@ -307,7 +315,7 @@
 	  options.rad = 12;
 	  // console.log(options);
 	  MovingObject.call(this, options);
-	  
+
 	}
 
 	Util.inherits(MovingObject, Ship);
@@ -316,6 +324,13 @@
 
 	  this.pos = this.game.randomPosition();
 	  this.vel = [0,0];
+	};
+
+	Ship.prototype.power = function () {
+	  console.log("in power");
+	  console.log(this.vel);
+	  this.vel[0] += 1;
+	  this.vel[1] += 1;
 	};
 
 	module.exports = Ship;
