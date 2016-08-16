@@ -68,7 +68,7 @@
 	  this.ctx = ctx;
 	  let width = window.innerWidth;
 	  let height = window.innerHeight;
-	  const NUM_ASTEROIDS = 20;
+	  const NUM_ASTEROIDS = 5;
 	  this.game = new Game(ctx, NUM_ASTEROIDS, width, height);
 	}
 
@@ -82,9 +82,10 @@
 
 	GameView.prototype.bindKeyHandlers = function () {
 	  let ship = this.game.ship;
-
+	  window.key('space', function () { ship.fire(); });
 	  window.key('up', function () { ship.power(); });
 	};
+
 
 	module.exports = GameView;
 
@@ -105,6 +106,7 @@
 	  this.ship = new Ship({pos: this.randomPosition(), game: this});
 	  this.addAsteroids();
 	  this.ctx = ctx;
+	  this.bullets = [];
 	}
 
 	Game.prototype.addAsteroids = function () {
@@ -121,7 +123,7 @@
 	};
 
 	Game.prototype.allObjects = function () {
-	  return this.asteroids.concat([this.ship]);
+	  return this.asteroids.concat([this.ship]).concat(this.bullets);
 	};
 
 	Game.prototype.randomPosition = function () {
@@ -134,6 +136,10 @@
 	  this.ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
 
 	  this.allObjects().forEach(object => {
+	    if (object instanceof Ship) {
+	      object.vel[0] *= .99;
+	      object.vel[1] *= .99;
+	    }
 	    // console.log(asteroid.pos, asteroid.vel);
 	    // asteroid.pos = this.wrap(asteroid.pos);
 	    object.draw(this.ctx);
@@ -250,9 +256,11 @@
 	};
 
 	MovingObject.prototype.move = function () {
+
 	  this.pos[0] += this.vel[0];
 	  this.pos[1] += this.vel[1];
 	  this.pos = this.game.wrap(this.pos);
+
 	};
 
 	MovingObject.prototype.isCollidedWith = function(otherObject) {
@@ -307,6 +315,8 @@
 
 	const Util = __webpack_require__(5);
 	const MovingObject = __webpack_require__(4);
+	const Bullet = __webpack_require__(7);
+
 
 	function Ship (options) {
 	  options.vel = [0,0];
@@ -327,13 +337,43 @@
 	};
 
 	Ship.prototype.power = function () {
-	  console.log("in power");
-	  console.log(this.vel);
 	  this.vel[0] += 1;
 	  this.vel[1] += 1;
 	};
 
+	Ship.prototype.fire = function () {
+	  let pos1 = Array.from(this.pos);
+	  let options = {pos: pos1, game: this.game};
+	  let bullet = new Bullet(options);
+	  bullet.vel = Array.from(this.vel);
+	  bullet.vel[0] += 5;
+	  bullet.vel[1] += 5;
+	  this.game.bullets.push(bullet);
+	};
+
 	module.exports = Ship;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const MovingObject = __webpack_require__(4);
+	const Util = __webpack_require__(5);
+
+
+	function Bullet (options) {
+	  this.rad = 4;
+	  console.log(this);
+	  console.log(this.vel);
+	  this.pos = options.pos;
+	  this.color = "orange";
+	  this.game = options.game;
+	}
+
+	Util.inherits(MovingObject, Bullet);
+
+	module.exports = Bullet;
 
 
 /***/ }
